@@ -1,3 +1,6 @@
+import java.util.HashMap;  
+import java.util.Set; 
+
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -30,36 +33,46 @@ public class Game
     }
 
     /**
-     * Create all the rooms and link their exits together.
+     * Create all the rooms, link their exits, and place items.
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
-      
-        // create the rooms
+        Room outside, theater, pub, lab, office, cellar, attic, library;
+
         outside = new Room("outside the main entrance of the university");
         theater = new Room("in a lecture theater");
         pub = new Room("in the campus pub");
         lab = new Room("in a computing lab");
         office = new Room("in the computing admin office");
-        
-        // initialise room exits
+        cellar = new Room("in a dark cellar");
+        attic = new Room("in a dusty attic");
+        library = new Room("in the campus library");
+
         outside.setExit("east", theater);
         outside.setExit("south", lab);
         outside.setExit("west", pub);
-
-        theater.setExit("west", outside);
-
-        pub.setExit("east", outside);
-
         lab.setExit("north", outside);
         lab.setExit("east", office);
-
         office.setExit("west", lab);
+        theater.setExit("west", outside);
+        pub.setExit("east", outside);
+        cellar.setExit("up", lab);
+        attic.setExit("down", theater);
+        library.setExit("south", pub);
 
-        currentRoom = outside;  // start game outside
+        Item book = new Item("an ancient book", 3);
+        Item beer = new Item("a pint of cold beer", 1);
+        Item computer = new Item("a dusty computer", 10);
+        Item scroll = new Item("a magical scroll", 2);
+
+        library.setItem(book);
+        pub.setItem(beer);
+        lab.setItem(computer);
+        attic.setItem(scroll);
+
+        currentRoom = outside;
     }
-
+    
     /**
      *  Main play routine.  Loops until end of play.
      */

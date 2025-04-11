@@ -6,7 +6,7 @@ import java.util.Iterator;
  * Class Room - a room in an adventure game.
  *
  * This class is part of the "World of Zuul" application. 
- * "World of Zuul" is a very simple, text based adventure game.  
+ * "World of Zuul" is a very simple, text based adventure game.  public String getExitString() {
  *
  * A "Room" represents one location in the scenery of the game.  It is 
  * connected to other rooms via exits.  For each existing exit, the room 
@@ -20,7 +20,8 @@ public class Room
 {
     private String description;
     private HashMap<String, Room> exits;        // stores exits of this room.
-
+    private Item item;
+    
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
@@ -32,7 +33,15 @@ public class Room
         this.description = description;
         exits = new HashMap<>();
     }
-
+    
+    /**
+     * Place an item in this room.
+     * @param item The item to be placed in the room.
+     */
+    public void setItem(Item item) {
+        this.item = item;
+    }
+    
     /**
      * Define an exit from this room.
      * @param direction The direction of the exit.
@@ -53,14 +62,13 @@ public class Room
     }
 
     /**
-     * Return a description of the room in the form:
-     *     You are in the kitchen.
-     *     Exits: north west
-     * @return A long description of this room
+     * Return a description of the room, including exits and item (if present).
+     * @return A long description of this room.
      */
     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getExitString();
+        String itemDescription = (item != null) ? "\nYou see: " + item.toString() : "";
+        return "You are " + description + ".\n" + getExitString() + itemDescription;
     }
 
     /**
