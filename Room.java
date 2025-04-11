@@ -1,12 +1,13 @@
 import java.util.Set;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * Class Room - a room in an adventure game.
  *
  * This class is part of the "World of Zuul" application. 
- * "World of Zuul" is a very simple, text based adventure game.  public String getExitString() {
+ * "World of Zuul" is a very simple, text based adventure game.  
  *
  * A "Room" represents one location in the scenery of the game.  It is 
  * connected to other rooms via exits.  For each existing exit, the room 
@@ -20,8 +21,8 @@ public class Room
 {
     private String description;
     private HashMap<String, Room> exits;        // stores exits of this room.
-    private Item item;
-    
+    private ArrayList<Item> items;
+
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
@@ -32,16 +33,9 @@ public class Room
     {
         this.description = description;
         exits = new HashMap<>();
+        items = new ArrayList<>();
     }
-    
-    /**
-     * Place an item in this room.
-     * @param item The item to be placed in the room.
-     */
-    public void setItem(Item item) {
-        this.item = item;
-    }
-    
+
     /**
      * Define an exit from this room.
      * @param direction The direction of the exit.
@@ -50,6 +44,14 @@ public class Room
     public void setExit(String direction, Room neighbor) 
     {
         exits.put(direction, neighbor);
+    }
+
+    /**
+     * Add an item to this room.
+     * @param item The item to add.
+     */
+    public void addItem(Item item) {
+        items.add(item);
     }
 
     /**
@@ -62,13 +64,19 @@ public class Room
     }
 
     /**
-     * Return a description of the room, including exits and item (if present).
+     * Return a description of the room, including exits and items.
      * @return A long description of this room.
      */
     public String getLongDescription()
     {
-        String itemDescription = (item != null) ? "\nYou see: " + item.toString() : "";
-        return "You are " + description + ".\n" + getExitString() + itemDescription;
+        StringBuilder itemDescription = new StringBuilder();
+        if (!items.isEmpty()) {
+            itemDescription.append("\nYou see:");
+            for (Item item : items) {
+                itemDescription.append(" ").append(item.toString()).append(";");
+            }
+        }
+        return "You are " + description + ".\n" + getExitString() + itemDescription.toString();
     }
 
     /**
@@ -97,4 +105,3 @@ public class Room
         return exits.get(direction);
     }
 }
-
