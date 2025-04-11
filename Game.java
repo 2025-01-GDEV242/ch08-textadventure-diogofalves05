@@ -65,10 +65,10 @@ public class Game
         Item computer = new Item("a dusty computer", 10);
         Item scroll = new Item("a magical scroll", 2);
 
-        library.setItem(book);
-        pub.setItem(beer);
-        lab.setItem(computer);
-        attic.setItem(scroll);
+        library.addItem(book);
+        pub.addItem(beer);
+        lab.addItem(computer);
+        attic.addItem(scroll);  
 
         currentRoom = outside;
     }
