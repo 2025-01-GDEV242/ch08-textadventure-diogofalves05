@@ -22,7 +22,8 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
-        
+    private Room previousRoom;
+    
     /**
      * Create the game and initialise its internal map.
      */
@@ -131,6 +132,10 @@ public class Game
             case QUIT:
                 wantToQuit = quit(command);
                 break;
+                
+            case BACK:
+                goBack();
+                break;
         }
         return wantToQuit;
     }
@@ -172,17 +177,33 @@ public class Game
             System.out.println("There is no door!");
         }
         else {
+            previousRoom = currentRoom;
             currentRoom = nextRoom;
             System.out.println(currentRoom.getLongDescription());
         }
     }
 
+    /**
+     * Go back to the previous room if possible.
+     */
+        private void goBack()
+    {
+        if (previousRoom != null) {
+            Room temp = currentRoom;
+            currentRoom = previousRoom;
+            previousRoom = temp;
+            System.out.println(currentRoom.getLongDescription());
+        } else {
+            System.out.println("You can't go back.");
+        }
+    }
+    
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
      * @return true, if this command quits the game, false otherwise.
      */
-    private boolean quit(Command command) 
+        private boolean quit(Command command) 
     {
         if(command.hasSecondWord()) {
             System.out.println("Quit what?");
