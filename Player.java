@@ -95,4 +95,12 @@ public class Player
         }
         return total;
     }
+    
+    public void increaseMaxWeight(int amount) {
+        maxWeight += amount;
+    }
+    
+    public int getMaxWeight() {
+        return maxWeight;
+    }
 }

@@ -4,18 +4,10 @@ import java.util.Stack;
 
 /**
  *  This class is the main class of the "World of Zuul" application. 
- *  "World of Zuul" is a very simple, text based adventure game.  Users 
- *  can walk around some scenery. That's all. It should really be extended 
- *  to make it more interesting!
+ *  "World of Zuul" is a very simple, text based adventure game.  
+ *  Users can walk around some scenery.
  * 
- *  To play this game, create an instance of this class and call the "play"
- *  method.
- * 
- *  This main class creates and initialises all the others: it creates all
- *  rooms, creates the parser and starts the game.  It also evaluates and
- *  executes the commands that the parser returns.
- * 
- * @author  Michael Kölling and David J. Barnes
+ * @author  
  * @version 2016.02.29
  */
 
@@ -25,9 +17,6 @@ public class Game
     private Player player;
     private Stack<Room> roomHistory;
     
-    /**
-     * Create the game and initialise its internal map.
-     */
     public Game() 
     {
         createRooms();
@@ -35,9 +24,6 @@ public class Game
         parser = new Parser(); 
     }
 
-    /**
-     * Create all the rooms, link their exits, and place items.
-     */
     private void createRooms()
     {
         Room outside, theater, pub, lab, office, cellar, attic, library;
@@ -58,28 +44,27 @@ public class Game
         lab.setExit("east", office);
         office.setExit("west", lab);
         theater.setExit("west", outside);
+        theater.setExit("up", attic);
         pub.setExit("east", outside);
         cellar.setExit("up", lab);
         attic.setExit("down", theater);
         library.setExit("south", pub);
-        theater.setExit("up", attic);
 
         Item book = new Item("an ancient book", 3);
         Item beer = new Item("a pint of cold beer", 1);
         Item computer = new Item("a dusty computer", 10);
         Item scroll = new Item("a magical scroll", 2);
+        Item cookie = new Item("a magic cookie", 1);
 
         library.addItem(book);
         pub.addItem(beer);
         lab.addItem(computer);
         attic.addItem(scroll);
+        office.addItem(cookie);
 
         player = new Player(outside);
     }
-    
-    /**
-     *  Main play routine.  Loops until end of play.
-     */
+
     public void play() 
     {            
         printWelcome();
@@ -92,9 +77,6 @@ public class Game
         System.out.println("Thank you for playing.  Good bye.");
     }
 
-    /**
-     * Print out the opening message for the player.
-     */
     private void printWelcome()
     {
         System.out.println();
@@ -105,72 +87,54 @@ public class Game
         System.out.println(player.getCurrentRoom().getLongDescription());
     }
 
-    /**
-     * Given a command, process (that is: execute) the command.
-     * @param command The command to be processed.
-     * @return true If the command ends the game, false otherwise.
-     */
     private boolean processCommand(Command command) 
     {
         boolean wantToQuit = false;
-
         CommandWord commandWord = command.getCommandWord();
 
         switch (commandWord) {
             case UNKNOWN:
                 System.out.println("I don't know what you mean...");
                 break;
-
             case HELP:
                 printHelp();
                 break;
-
             case GO:
                 goRoom(command);
                 break;
-
             case QUIT:
                 wantToQuit = quit(command);
                 break;
-                
             case BACK:
                 goBack();
                 break;
-                
             case TAKE:
                 takeItem(command);
                 break;
-
             case DROP:
                 dropItem(command);
                 break;
-
             case INVENTORY:
                 showInventory();
                 break;
-            
             case ITEMS:
                 showItems();
-                break; 
+                break;
+            case EAT:
+                eatItem(command);
+                break;
         }
         return wantToQuit;
     }
 
-    /**
-     * Print out some help information.
-     */
     private void printHelp() 
     {
         System.out.println("You are lost. You are alone. You wander");
         System.out.println("around at the university.");
-        System.out.println();
         System.out.println("Your command words are:");
         parser.showCommands();
     }
 
-    /**
-     * Try to go in one direction.
-     */
     private void goRoom(Command command) 
     {
         if (!command.hasSecondWord()) {
@@ -190,9 +154,6 @@ public class Game
         }
     }
 
-    /**
-     * Go back to the previous room using room history stack.
-     */
     private void goBack()
     {
         if (!roomHistory.isEmpty()) {
@@ -203,9 +164,6 @@ public class Game
         }
     }
 
-    /**
-     * Try to take an item from the current room.
-     */
     private void takeItem(Command command)
     {
         if (!command.hasSecondWord()) {
@@ -221,16 +179,13 @@ public class Game
                 System.out.println("You picked up: " + item);
             } else {
                 System.out.println("That item is too heavy to carry.");
-                player.getCurrentRoom().addItem(item); // put it back
+                player.getCurrentRoom().addItem(item);
             }
         } else {
             System.out.println("There is no item by that name here.");
         }
     }
 
-    /**
-     * Try to drop an item the player is carrying.
-     */
     private void dropItem(Command command)
     {
         if (!command.hasSecondWord()) {
@@ -250,33 +205,46 @@ public class Game
         System.out.println("You dropped: " + dropped);
     }
 
-    /**
-     * Show player's inventory.
-     */
     private void showInventory()
     {
         System.out.println(player.getInventoryString());
     }
 
-    /**
-     * Show all carried items and their total weight.
-     */
-        private void showItems()
+    private void showItems()
     {
         System.out.println(player.getInventoryString());
         System.out.println("Total weight: " + player.getTotalWeight());
     }
-    
-    /**
-     * Handle quit command.
-     */
+
+    private void eatItem(Command command)
+    {
+        if (!command.hasSecondWord()) {
+            System.out.println("Eat what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+
+        if (!player.hasItem(itemName)) {
+            System.out.println("You are not carrying that.");
+            return;
+        }
+
+        if (itemName.equalsIgnoreCase("cookie") || itemName.contains("cookie")) {
+            Item cookie = player.removeItem(itemName);
+            player.increaseMaxWeight(10);
+            System.out.println("You ate the magic cookie! You feel stronger. Max weight is now " + player.getMaxWeight() + ".");
+        } else {
+            System.out.println("You can't eat that.");
+        }
+    }
+
     private boolean quit(Command command) 
     {
         if (command.hasSecondWord()) {
             System.out.println("Quit what?");
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
