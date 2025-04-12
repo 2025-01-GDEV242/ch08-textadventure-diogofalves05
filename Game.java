@@ -148,6 +148,10 @@ public class Game
             case INVENTORY:
                 showInventory();
                 break;
+            
+            case ITEMS:
+                showItems();
+                break; 
         }
         return wantToQuit;
     }
@@ -254,6 +258,15 @@ public class Game
         System.out.println(player.getInventoryString());
     }
 
+    /**
+     * Show all carried items and their total weight.
+     */
+        private void showItems()
+    {
+        System.out.println(player.getInventoryString());
+        System.out.println("Total weight: " + player.getTotalWeight());
+    }
+    
     /**
      * Handle quit command.
      */
