@@ -22,7 +22,7 @@ import java.util.Stack;
 public class Game 
 {
     private Parser parser;
-    private Room currentRoom;
+    private Player player;
     private Stack<Room> roomHistory;
     
     /**
@@ -73,7 +73,7 @@ public class Game
         lab.addItem(computer);
         attic.addItem(scroll);  
 
-        currentRoom = outside;
+        player = new Player(outside);
     }
     
     /**
@@ -101,7 +101,7 @@ public class Game
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type '" + CommandWord.HELP + "' if you need help.");
         System.out.println();
-        System.out.println(currentRoom.getLongDescription());
+        System.out.println(player.getCurrentRoom().getLongDescription());
     }
 
     /**
@@ -165,14 +165,14 @@ public class Game
         }
 
         String direction = command.getSecondWord();
-        Room nextRoom = currentRoom.getExit(direction);
+        Room nextRoom = player.getCurrentRoom().getExit(direction);
 
         if (nextRoom == null) {
             System.out.println("There is no door!");
         } else {
-            roomHistory.push(currentRoom);
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
+            roomHistory.push(player.getCurrentRoom());
+            player.setCurrentRoom(nextRoom);
+            System.out.println(player.getCurrentRoom().getLongDescription());
         }
     }
 
@@ -182,8 +182,8 @@ public class Game
     private void goBack()
     {
         if (!roomHistory.isEmpty()) {
-            currentRoom = roomHistory.pop();
-            System.out.println(currentRoom.getLongDescription());
+            player.setCurrentRoom(roomHistory.pop());
+            System.out.println(player.getCurrentRoom().getLongDescription());
         } else {
             System.out.println("You can't go back any further.");
         }
