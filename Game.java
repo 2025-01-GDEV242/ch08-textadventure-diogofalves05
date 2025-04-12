@@ -1,5 +1,6 @@
 import java.util.HashMap;  
 import java.util.Set; 
+import java.util.Stack;
 
 /**
  *  This class is the main class of the "World of Zuul" application. 
@@ -22,7 +23,7 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
-    private Room previousRoom;
+    private Stack<Room> roomHistory;
     
     /**
      * Create the game and initialise its internal map.
@@ -30,7 +31,8 @@ public class Game
     public Game() 
     {
         createRooms();
-        parser = new Parser();
+        roomHistory = new Stack<>();
+        parser = new Parser(); 
     }
 
     /**
@@ -81,11 +83,8 @@ public class Game
     {            
         printWelcome();
 
-        // Enter the main command loop.  Here we repeatedly read commands and
-        // execute them until the game is over.
-                
         boolean finished = false;
-        while (! finished) {
+        while (!finished) {
             Command command = parser.getCommand();
             finished = processCommand(command);
         }
@@ -140,8 +139,6 @@ public class Game
         return wantToQuit;
     }
 
-    // implementations of user commands:
-
     /**
      * Print out some help information.
      * Here we print some stupid, cryptic message and a list of the 
@@ -156,61 +153,55 @@ public class Game
         parser.showCommands();
     }
 
-    /** 
+    /**
      * Try to go in one direction. If there is an exit, enter the new
      * room, otherwise print an error message.
      */
     private void goRoom(Command command) 
     {
-        if(!command.hasSecondWord()) {
-            // if there is no second word, we don't know where to go...
+        if (!command.hasSecondWord()) {
             System.out.println("Go where?");
             return;
         }
 
         String direction = command.getSecondWord();
-
-        // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
 
         if (nextRoom == null) {
             System.out.println("There is no door!");
-        }
-        else {
-            previousRoom = currentRoom;
+        } else {
+            roomHistory.push(currentRoom);
             currentRoom = nextRoom;
             System.out.println(currentRoom.getLongDescription());
         }
     }
 
     /**
-     * Go back to the previous room if possible.
+     * Go back to the previous room using room history stack.
      */
-        private void goBack()
+    private void goBack()
     {
-        if (previousRoom != null) {
-            Room temp = currentRoom;
-            currentRoom = previousRoom;
-            previousRoom = temp;
+        if (!roomHistory.isEmpty()) {
+            currentRoom = roomHistory.pop();
             System.out.println(currentRoom.getLongDescription());
         } else {
-            System.out.println("You can't go back.");
+            System.out.println("You can't go back any further.");
         }
     }
-    
+
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
      * @return true, if this command quits the game, false otherwise.
      */
-        private boolean quit(Command command) 
+    private boolean quit(Command command) 
     {
-        if(command.hasSecondWord()) {
+        if (command.hasSecondWord()) {
             System.out.println("Quit what?");
             return false;
         }
         else {
-            return true;  // signal that we want to quit
+            return true;
         }
     }
 }
