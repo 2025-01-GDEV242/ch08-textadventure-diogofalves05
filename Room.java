@@ -55,13 +55,13 @@ public class Room
     }
     
     /**
-     * Remove and return an item by name.
+     * Remove and return an item by name (partial match allowed).
      * @param name The name/description of the item.
      * @return The item if found, otherwise null.
      */
     public Item takeItem(String name) {
         for (Item item : items) {
-            if (item.getDescription().equalsIgnoreCase(name)) {
+            if (item.getDescription().toLowerCase().contains(name.toLowerCase())) {
                 items.remove(item);
                 return item;
             }

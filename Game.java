@@ -71,7 +71,8 @@ public class Game
         library.addItem(book);
         pub.addItem(beer);
         lab.addItem(computer);
-        attic.addItem(scroll);  
+        attic.addItem(scroll);
+        theater.setExit("up", attic);
 
         player = new Player(outside);
     }
@@ -143,14 +144,16 @@ public class Game
             case DROP:
                 dropItem(command);
                 break;
+
+            case INVENTORY:
+                showInventory();
+                break;
         }
         return wantToQuit;
     }
 
     /**
      * Print out some help information.
-     * Here we print some stupid, cryptic message and a list of the 
-     * command words.
      */
     private void printHelp() 
     {
@@ -162,8 +165,7 @@ public class Game
     }
 
     /**
-     * Try to go in one direction. If there is an exit, enter the new
-     * room, otherwise print an error message.
+     * Try to go in one direction.
      */
     private void goRoom(Command command) 
     {
@@ -205,44 +207,51 @@ public class Game
         if (!command.hasSecondWord()) {
             System.out.println("Take what?");
             return;
-    }
+        }
 
-    String itemName = command.getSecondWord();
-    Item item = player.getCurrentRoom().takeItem(itemName);
+        String itemName = command.getSecondWord();
+        Item item = player.getCurrentRoom().takeItem(itemName);
 
-    if (item != null) {
-        player.addItem(item);
-        System.out.println("You picked up: " + item);
-    } else {
-        System.out.println("There is no item by that name here.");
+        if (item != null) {
+            player.addItem(item);
+            System.out.println("You picked up: " + item);
+        } else {
+            System.out.println("There is no item by that name here.");
+        }
     }
-}
 
     /**
-     * Try to drop the item the player is carrying.
+     * Try to drop an item the player is carrying.
      */
     private void dropItem(Command command)
     {
-    if (!command.hasSecondWord()) {
-        System.out.println("Drop what?");
-        return;
+        if (!command.hasSecondWord()) {
+            System.out.println("Drop what?");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+
+        if (!player.hasItem(itemName)) {
+            System.out.println("You aren't carrying that.");
+            return;
+        }
+
+        Item dropped = player.removeItem(itemName);
+        player.getCurrentRoom().addItem(dropped);
+        System.out.println("You dropped: " + dropped);
     }
 
-    String itemName = command.getSecondWord();
-    if (!player.hasItem(itemName)) {
-        System.out.println("You aren't carrying that.");
-        return;
+    /**
+     * Show player's inventory.
+     */
+    private void showInventory()
+    {
+        System.out.println(player.getInventoryString());
     }
 
-    Item dropped = player.removeItem(itemName);
-    player.getCurrentRoom().addItem(dropped);
-    System.out.println("You dropped: " + dropped);
-}
-    
-    /** 
-     * "Quit" was entered. Check the rest of the command to see
-     * whether we really quit the game.
-     * @return true, if this command quits the game, false otherwise.
+    /**
+     * Handle quit command.
      */
     private boolean quit(Command command) 
     {
