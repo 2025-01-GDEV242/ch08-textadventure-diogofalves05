@@ -1,6 +1,7 @@
 import java.util.Set;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * Class Room - a room in an adventure game.
@@ -20,6 +21,7 @@ public class Room
 {
     private String description;
     private HashMap<String, Room> exits;        // stores exits of this room.
+    private ArrayList<Item> items;
 
     /**
      * Create a room described "description". Initially, it has
@@ -31,6 +33,7 @@ public class Room
     {
         this.description = description;
         exits = new HashMap<>();
+        items = new ArrayList<>();
     }
 
     /**
@@ -44,6 +47,29 @@ public class Room
     }
 
     /**
+     * Add an item to this room.
+     * @param item The item to add.
+     */
+    public void addItem(Item item) {
+        items.add(item);
+    }
+    
+    /**
+     * Remove and return an item by name (partial match allowed).
+     * @param name The name/description of the item.
+     * @return The item if found, otherwise null.
+     */
+    public Item takeItem(String name) {
+        for (Item item : items) {
+            if (item.getDescription().toLowerCase().contains(name.toLowerCase())) {
+                items.remove(item);
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
      * @return The short description of the room
      * (the one that was defined in the constructor).
      */
@@ -53,14 +79,19 @@ public class Room
     }
 
     /**
-     * Return a description of the room in the form:
-     *     You are in the kitchen.
-     *     Exits: north west
-     * @return A long description of this room
+     * Return a description of the room, including exits and items.
+     * @return A long description of this room.
      */
     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getExitString();
+        StringBuilder itemDescription = new StringBuilder();
+        if (!items.isEmpty()) {
+            itemDescription.append("\nYou see:");
+            for (Item item : items) {
+                itemDescription.append(" ").append(item.toString()).append(";");
+            }
+        }
+        return "You are " + description + ".\n" + getExitString() + itemDescription.toString();
     }
 
     /**
@@ -89,4 +120,3 @@ public class Room
         return exits.get(direction);
     }
 }
-
