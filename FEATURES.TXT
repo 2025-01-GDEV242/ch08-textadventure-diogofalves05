@@ -1,0 +1,25 @@
+FEATURES.TXT
+
+=== A LEVEL FEATURES IMPLEMENTED ===
+- All mandatory JavaDoc comments (classes and methods)
+- A main method exists to run the game
+- The game map contains at least 8 rooms
+- All rooms are connected with appropriate exits
+- Every class is well-documented
+- One or more items are placed in multiple rooms
+- Player can see items in a room
+- The 'look' command is implemented (part of 8.14 if done earlier)
+- Player can carry multiple items
+- The inventory command lists carried items
+- The total weight of carried items is displayed
+- Weight limit on carried items is enforced
+- A back command is implemented to return to previous rooms
+- Player class is used to store player state
+- take and drop commands are fully implemented
+
+=== EXTRA CREDIT FEATURES IMPLEMENTED ===
+- Stack-based back command (player can backtrack multiple times)
+- eat command implemented for a magic cookie
+- Magic cookie increases player's max weight capacity
+
+All features are tested and functional.
