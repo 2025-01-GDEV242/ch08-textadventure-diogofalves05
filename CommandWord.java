@@ -9,7 +9,7 @@ public enum CommandWord
 {
     // A value for each command word along with its
     // corresponding user interface string.
-    GO("go"), QUIT("quit"), HELP("help"), BACK("back"), UNKNOWN("?");
+    GO("go"), QUIT("quit"), HELP("help"), BACK("back"), TAKE("take"), DROP("drop"), UNKNOWN("?");
     
     // The command string.
     private String commandString;
@@ -18,7 +18,7 @@ public enum CommandWord
      * Initialise with the corresponding command string.
      * @param commandString The command string.
      */
-    CommandWord(String commandString)
+        CommandWord(String commandString)
     {
         this.commandString = commandString;
     }

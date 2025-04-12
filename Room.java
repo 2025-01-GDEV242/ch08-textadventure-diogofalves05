@@ -53,6 +53,21 @@ public class Room
     public void addItem(Item item) {
         items.add(item);
     }
+    
+    /**
+     * Remove and return an item by name.
+     * @param name The name/description of the item.
+     * @return The item if found, otherwise null.
+     */
+    public Item takeItem(String name) {
+        for (Item item : items) {
+            if (item.getDescription().equalsIgnoreCase(name)) {
+                items.remove(item);
+                return item;
+            }
+        }
+        return null;
+    }
 
     /**
      * @return The short description of the room

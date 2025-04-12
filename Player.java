@@ -29,5 +29,25 @@ public class Player
      */
     public void setCurrentRoom(Room room) {
         currentRoom = room;
+    }   
+    
+    private Item inventory; // only one item allowed
+
+    public boolean hasItem() {
+        return inventory != null;
+    }
+
+    public void setItem(Item item) {
+        this.inventory = item;
+    }
+
+    public Item getItem() {
+        return inventory;
+    }
+
+    public Item dropItem() {
+        Item dropped = inventory;
+        inventory = null;
+        return dropped;
     }
 }

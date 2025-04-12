@@ -135,6 +135,14 @@ public class Game
             case BACK:
                 goBack();
                 break;
+                
+            case TAKE:
+                takeItem(command);
+                break;
+
+            case DROP:
+                dropItem(command);
+                break;
         }
         return wantToQuit;
     }
@@ -189,6 +197,47 @@ public class Game
         }
     }
 
+    /**
+     * Try to take an item from the current room.
+     */
+    private void takeItem(Command command)
+    {
+        if (!command.hasSecondWord()) {
+            System.out.println("Take what?");
+            return;
+        }
+
+        if (player.hasItem()) {
+            System.out.println("You are already carrying something. Drop it first.");
+            return;
+        }
+
+        String itemName = command.getSecondWord();
+        Item item = player.getCurrentRoom().takeItem(itemName);
+
+        if (item != null) {
+            player.setItem(item);
+            System.out.println("You picked up: " + item);
+        } else {
+            System.out.println("There is no item by that name here.");
+        }
+    }
+
+    /**
+     * Try to drop the item the player is carrying.
+     */
+    private void dropItem(Command command)
+    {
+        if (!player.hasItem()) {
+            System.out.println("You aren't carrying anything.");
+            return;
+        }
+
+        Item dropped = player.dropItem();
+        player.getCurrentRoom().addItem(dropped);
+        System.out.println("You dropped: " + dropped);
+    }
+    
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
