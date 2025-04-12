@@ -123,6 +123,10 @@ public class Game
             case EAT:
                 eatItem(command);
                 break;
+                
+            case LOOK:
+                look();
+                break;
         }
         return wantToQuit;
     }
@@ -210,6 +214,14 @@ public class Game
         System.out.println(player.getInventoryString());
     }
 
+    /**
+     * Show the description of the current room.
+     */
+    private void look()
+    {
+        System.out.println(player.getCurrentRoom().getLongDescription());
+    }
+    
     private void showItems()
     {
         System.out.println(player.getInventoryString());
