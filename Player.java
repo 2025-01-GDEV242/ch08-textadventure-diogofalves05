@@ -10,7 +10,8 @@ public class Player
 {
     private Room currentRoom;
     private ArrayList<Item> inventory;
-
+    private int maxWeight = 10; 
+    
     /**
      * Create a new player with a starting room.
      * @param startRoom The room the player starts in.
@@ -39,8 +40,19 @@ public class Player
         return !inventory.isEmpty();
     }
 
-    public void addItem(Item item) {
-        inventory.add(item);
+    /**
+     * Attempt to add an item to the player's inventory.
+     * Only succeeds if the weight limit is not exceeded.
+     * @param item The item to add
+     * @return true if item was added, false if too heavy
+     */
+    public boolean addItem(Item item) {
+        if (getTotalWeight() + item.getWeight() <= maxWeight) {
+            inventory.add(item);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean hasItem(String name) {
@@ -71,5 +83,16 @@ public class Player
             result.append(" ").append(item.toString()).append(";");
         }
         return result.toString();
+    }
+
+    /**
+     * Calculate the total weight of items the player is carrying.
+     */
+    public int getTotalWeight() {
+        int total = 0;
+        for (Item item : inventory) {
+            total += item.getWeight();
+        }
+        return total;
     }
 }

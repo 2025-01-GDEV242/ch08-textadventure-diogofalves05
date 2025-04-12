@@ -62,6 +62,7 @@ public class Game
         cellar.setExit("up", lab);
         attic.setExit("down", theater);
         library.setExit("south", pub);
+        theater.setExit("up", attic);
 
         Item book = new Item("an ancient book", 3);
         Item beer = new Item("a pint of cold beer", 1);
@@ -72,7 +73,6 @@ public class Game
         pub.addItem(beer);
         lab.addItem(computer);
         attic.addItem(scroll);
-        theater.setExit("up", attic);
 
         player = new Player(outside);
     }
@@ -213,8 +213,12 @@ public class Game
         Item item = player.getCurrentRoom().takeItem(itemName);
 
         if (item != null) {
-            player.addItem(item);
-            System.out.println("You picked up: " + item);
+            if (player.addItem(item)) {
+                System.out.println("You picked up: " + item);
+            } else {
+                System.out.println("That item is too heavy to carry.");
+                player.getCurrentRoom().addItem(item); // put it back
+            }
         } else {
             System.out.println("There is no item by that name here.");
         }
