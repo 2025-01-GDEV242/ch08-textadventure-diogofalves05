@@ -1,5 +1,7 @@
+import java.util.ArrayList;
+
 /**
- * Represents a player in the game. Stores the player's current room.
+ * Represents a player in the game. Stores the player's current room and inventory.
  * 
  * @author Diogo
  * @version 2025.04.11
@@ -7,6 +9,7 @@
 public class Player
 {
     private Room currentRoom;
+    private ArrayList<Item> inventory;
 
     /**
      * Create a new player with a starting room.
@@ -14,6 +17,7 @@ public class Player
      */
     public Player(Room startRoom) {
         currentRoom = startRoom;
+        inventory = new ArrayList<>();
     }
 
     /**
@@ -29,25 +33,43 @@ public class Player
      */
     public void setCurrentRoom(Room room) {
         currentRoom = room;
-    }   
-    
-    private Item inventory; // only one item allowed
-
-    public boolean hasItem() {
-        return inventory != null;
     }
 
-    public void setItem(Item item) {
-        this.inventory = item;
+    public boolean hasItems() {
+        return !inventory.isEmpty();
     }
 
-    public Item getItem() {
-        return inventory;
+    public void addItem(Item item) {
+        inventory.add(item);
     }
 
-    public Item dropItem() {
-        Item dropped = inventory;
-        inventory = null;
-        return dropped;
+    public boolean hasItem(String name) {
+        for (Item item : inventory) {
+            if (item.getDescription().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Item removeItem(String name) {
+        for (Item item : inventory) {
+            if (item.getDescription().equalsIgnoreCase(name)) {
+                inventory.remove(item);
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public String getInventoryString() {
+        if (inventory.isEmpty()) {
+            return "You are not carrying anything.";
+        }
+        StringBuilder result = new StringBuilder("You are carrying:");
+        for (Item item : inventory) {
+            result.append(" ").append(item.toString()).append(";");
+        }
+        return result.toString();
     }
 }

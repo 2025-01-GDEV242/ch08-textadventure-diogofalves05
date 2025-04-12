@@ -205,38 +205,39 @@ public class Game
         if (!command.hasSecondWord()) {
             System.out.println("Take what?");
             return;
-        }
-
-        if (player.hasItem()) {
-            System.out.println("You are already carrying something. Drop it first.");
-            return;
-        }
-
-        String itemName = command.getSecondWord();
-        Item item = player.getCurrentRoom().takeItem(itemName);
-
-        if (item != null) {
-            player.setItem(item);
-            System.out.println("You picked up: " + item);
-        } else {
-            System.out.println("There is no item by that name here.");
-        }
     }
+
+    String itemName = command.getSecondWord();
+    Item item = player.getCurrentRoom().takeItem(itemName);
+
+    if (item != null) {
+        player.addItem(item);
+        System.out.println("You picked up: " + item);
+    } else {
+        System.out.println("There is no item by that name here.");
+    }
+}
 
     /**
      * Try to drop the item the player is carrying.
      */
     private void dropItem(Command command)
     {
-        if (!player.hasItem()) {
-            System.out.println("You aren't carrying anything.");
-            return;
-        }
-
-        Item dropped = player.dropItem();
-        player.getCurrentRoom().addItem(dropped);
-        System.out.println("You dropped: " + dropped);
+    if (!command.hasSecondWord()) {
+        System.out.println("Drop what?");
+        return;
     }
+
+    String itemName = command.getSecondWord();
+    if (!player.hasItem(itemName)) {
+        System.out.println("You aren't carrying that.");
+        return;
+    }
+
+    Item dropped = player.removeItem(itemName);
+    player.getCurrentRoom().addItem(dropped);
+    System.out.println("You dropped: " + dropped);
+}
     
     /** 
      * "Quit" was entered. Check the rest of the command to see
